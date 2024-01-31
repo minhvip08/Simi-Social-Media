@@ -35,8 +35,8 @@ public class UserServiceImplementation implements UserService{
     public User followUser(Integer userId, Integer followerId) throws Exception {
         User user1 = findUserById(userId);
         User user2 = findUserById(followerId);
-        user1.getFollowers().add(followerId);
-        user2.getFollowings().add(userId);
+        user1.getFollowers().add(user2);
+        user2.getFollowings().add(user1);
         userRepository.save(user1);
         userRepository.save(user2);
         return user1;
