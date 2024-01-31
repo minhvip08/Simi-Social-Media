@@ -2,6 +2,7 @@ package com.simi.socialmedia.controller;
 
 import com.simi.socialmedia.model.User;
 import com.simi.socialmedia.repository.UserRepository;
+import com.simi.socialmedia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,9 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    UserService userService;
+
     /**
      *
      */
@@ -24,32 +28,20 @@ public class UserController {
 
     @PostMapping("/users")
     public User createUser(@RequestBody  User user) {
-        return userRepository.save(user);
+        User newUser = userService.register(user);
+        return newUser;
 
     }
 
     @GetMapping("users/{userId}")
     public User getUserById(@PathVariable("userId") Integer userId) throws Exception {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        return optionalUser.orElse(null);
+        User user = userService.findUserById(userId);
+        return user;
     }
 
     @PutMapping("users/{userId}")
     public User updateUser(@PathVariable("userId") Integer userId, @RequestBody User user) throws Exception {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        User user1 = optionalUser.orElseThrow(() -> new Exception("User not found"));
-        if (user.getFirstName() != null)
-            user1.setFirstName(user.getFirstName());
-        if (user.getLastName() != null)
-            user1.setLastName(user.getLastName());
-        if (user.getEmail() != null)
-            user1.setEmail(user.getEmail());
-        if (user.getPassword() != null)
-            user1.setPassword(user.getPassword());
-
-        System.out.println(user1);
-
-        return userRepository.save(user1);
+        return userService.updateUser(userId, user);
     }
 
     @DeleteMapping("users/{userId}")
@@ -59,5 +51,17 @@ public class UserController {
         userRepository.delete(user);
         return "User deleted successfully";
     }
+
+    @PutMapping("users/{userId}/follow/{followerId}")
+    public User followUserHandler(@PathVariable("userId") Integer userId, @PathVariable("followerId") Integer followerId) throws Exception {
+        return userService.followUser(userId, followerId);
+    }
+
+    @GetMapping("users/search")
+    public List<User> searchUserHandler(@RequestParam("query") String query) {
+        return userService.searchUser(query);
+    }
+
+
 
 }
