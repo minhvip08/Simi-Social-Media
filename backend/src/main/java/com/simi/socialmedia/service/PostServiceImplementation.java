@@ -27,13 +27,15 @@ public class PostServiceImplementation implements PostService{
     public Post createNewPost(Post post, Integer userId) throws Exception {
         Post newPost = new Post();
 
-        newPost.setUserId(userId);
+        User user = userService.findUserById(userId);
+        newPost.setUser(user);
 
         newPost.setContent(post.getContent());
         newPost.setCreatedAt(LocalDateTime.now());
         newPost.setTitle(post.getTitle());
         newPost.setImage(post.getImage());
         newPost.setContent(post.getContent());
+        user.setSavedPosts(user.getSavedPosts());
 
 
 
@@ -49,8 +51,10 @@ public class PostServiceImplementation implements PostService{
     public String deletePost(Integer postId, Integer userId) throws Exception {
         Optional<Post> optionalPost = postRepository.findById(postId);
         Post post = optionalPost.orElseThrow(() -> new Exception("Post not found"));
-        if (!Objects.equals(post.getUserId(), userId))
+        if (!Objects.equals(post.getUser().getId(), userId)) {
             throw new Exception("You are not authorized to delete this post");
+        }
+//        post.getUser().getSavedPosts().remove(post);
         postRepository.delete(post);
         return "Post deleted successfully";
     }
@@ -76,7 +80,15 @@ public class PostServiceImplementation implements PostService{
     public Post savePost(Integer postId, Integer userId) throws Exception {
         Post post = findPostById(postId);
         User user = userService.findUserById(userId);
-        user.getSavedPosts().add(post);
+        if (user.getSavedPosts() == null) {
+            user.setSavedPosts(List.of(post));
+
+        }
+        if (user.getSavedPosts().contains(post)) {
+            user.getSavedPosts().remove(post);
+        } else {
+            user.getSavedPosts().add(post);
+        }
         userRepository.save(user);
         return post;
     }
@@ -85,7 +97,11 @@ public class PostServiceImplementation implements PostService{
     public Post likePost(Integer postId, Integer userId) throws Exception {
         Post post = findPostById(postId);
         User user = userService.findUserById(userId);
-        post.getLiked().add(user);
+        if (post.getLiked().contains(user)) {
+            post.getLiked().remove(user);
+        } else {
+            post.getLiked().add(user);
+        }
         postRepository.save(post);
         return post;
 

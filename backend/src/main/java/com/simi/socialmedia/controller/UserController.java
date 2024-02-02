@@ -26,12 +26,7 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PostMapping("/users")
-    public User createUser(@RequestBody  User user) {
-        User newUser = userService.register(user);
-        return newUser;
 
-    }
 
     @GetMapping("users/{userId}")
     public User getUserById(@PathVariable("userId") Integer userId) throws Exception {

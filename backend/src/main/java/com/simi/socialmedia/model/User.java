@@ -1,5 +1,6 @@
 package com.simi.socialmedia.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,8 +30,14 @@ public class User {
     private String gender;
 
 
+    @OneToMany
     private List<User> followers = new ArrayList<>();
+
+    @OneToMany
     private List<User> followings = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToMany
     private List<Post> savedPosts = new ArrayList<>();
 
     public User(String firstName, String lastName, String email, String password, String gender) {

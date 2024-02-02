@@ -1,9 +1,7 @@
 package com.simi.socialmedia.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,17 +20,22 @@ public class Post {
     private String title;
     private String content;
     private String image;
-    private Integer userId;
+
+//    @JsonIgnore
+    @ManyToOne
+    private User user;
     private String video;
     private LocalDateTime createdAt;
 
+    @OneToMany
     private List<User> liked = new ArrayList<>();
 
-    public Post(String title, String content, String image, Integer userId, String video, LocalDateTime createdAt) {
+
+    public Post(String title, String content, String image, User user, String video, LocalDateTime createdAt) {
         this.title = title;
         this.content = content;
         this.image = image;
-        this.userId = userId;
+        this.user = user;
         this.video = video;
         this.createdAt = createdAt;
     }
