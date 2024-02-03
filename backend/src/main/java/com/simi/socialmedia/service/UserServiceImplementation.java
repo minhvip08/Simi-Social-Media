@@ -1,5 +1,6 @@
 package com.simi.socialmedia.service;
 
+import com.simi.socialmedia.config.JwtProvider;
 import com.simi.socialmedia.model.User;
 import com.simi.socialmedia.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,8 @@ public class UserServiceImplementation implements UserService{
             user1.setEmail(user.getEmail());
         if (user.getPassword() != null)
             user1.setPassword(user.getPassword());
+        if (user.getGender() != null)
+            user1.setGender(user.getGender());
 
         System.out.println(user1);
 
@@ -65,5 +68,14 @@ public class UserServiceImplementation implements UserService{
     public List<User> searchUser(String query) {
         List<User> users = userRepository.searchUser(query);
         return users;
+    }
+
+    @Override
+    public User findUserByJwt(String jwt) throws Exception {
+        String email = JwtProvider.getEmailFromJwtToken(jwt);
+
+        User user = findUserByEmail(email);
+
+        return user;
     }
 }

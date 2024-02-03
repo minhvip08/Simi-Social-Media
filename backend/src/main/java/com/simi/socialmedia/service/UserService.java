@@ -11,4 +11,6 @@ public interface UserService {
     public User followUser(Integer userId, Integer followerId) throws Exception;
     public User updateUser(Integer id, User user) throws Exception;
     public List<User> searchUser(String query);
+
+    public User findUserByJwt(String jwt) throws Exception;
 }
