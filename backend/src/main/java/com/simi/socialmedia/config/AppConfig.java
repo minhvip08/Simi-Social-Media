@@ -10,6 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
+import java.util.List;
 
 
 @Configuration
@@ -27,8 +32,24 @@ public class AppConfig {
 
                 )
                 .addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
-                .csrf(AbstractHttpConfigurer::disable);
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return http.build();
+    }
+
+    private CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            var cors = new CorsConfiguration();
+            cors.setAllowedOrigins(List.of("http://localhost:3000"
+                            ));
+
+            cors.setAllowedMethods(Collections.singletonList("*"));
+            cors.setAllowCredentials(true);
+            cors.setAllowedHeaders(Collections.singletonList("*"));
+            cors.setExposedHeaders(List.of("Authorization"));
+            cors.setMaxAge(3600L);
+            return cors;
+        };
     }
 
     @Bean
