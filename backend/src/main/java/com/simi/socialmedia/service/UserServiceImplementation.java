@@ -1,6 +1,7 @@
 package com.simi.socialmedia.service;
 
 import com.simi.socialmedia.config.JwtProvider;
+import com.simi.socialmedia.exception.UserException;
 import com.simi.socialmedia.model.User;
 import com.simi.socialmedia.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,12 @@ public class UserServiceImplementation implements UserService{
     }
 
     @Override
-    public User findUserById(Integer id) throws Exception {
+    public User findUserById(Integer id) throws UserException {
         Optional<User> optionalUser = userRepository.findById(id);
-        User user = optionalUser.orElseThrow(() -> new Exception("User not found"));
+        if (optionalUser.isEmpty()) {
+            throw new UserException("User not found");
+        }
+        User user = optionalUser.get();
         return user;
     }
 
@@ -33,7 +37,7 @@ public class UserServiceImplementation implements UserService{
     }
 
     @Override
-    public User followUser(Integer userId, Integer followerId) throws Exception {
+    public User followUser(Integer userId, Integer followerId) throws UserException {
         User user1 = findUserById(userId);
         User user2 = findUserById(followerId);
         user1.getFollowers().add(user2);
@@ -45,9 +49,13 @@ public class UserServiceImplementation implements UserService{
     }
 
     @Override
-    public User updateUser(Integer userId, User user) throws Exception {
+    public User updateUser(Integer userId, User user) throws UserException {
         Optional<User> optionalUser = userRepository.findById(userId);
-        User user1 = optionalUser.orElseThrow(() -> new Exception("User not found"));
+        Optional<User> optionalUser1 = userRepository.findById(user.getId());
+        if (optionalUser.isEmpty()) {
+            throw new UserException("User not found");
+        }
+        User user1 = optionalUser.get();
         if (user.getFirstName() != null)
             user1.setFirstName(user.getFirstName());
         if (user.getLastName() != null)
@@ -71,7 +79,7 @@ public class UserServiceImplementation implements UserService{
     }
 
     @Override
-    public User findUserByJwt(String jwt) throws Exception {
+    public User findUserByJwt(String jwt) throws UserException {
         String email = JwtProvider.getEmailFromJwtToken(jwt);
 
         User user = findUserByEmail(email);

@@ -1,5 +1,6 @@
 package com.simi.socialmedia.controller;
 
+import com.simi.socialmedia.exception.UserException;
 import com.simi.socialmedia.model.User;
 import com.simi.socialmedia.repository.UserRepository;
 import com.simi.socialmedia.service.UserService;
@@ -29,13 +30,13 @@ public class UserController {
 
 
     @GetMapping("users/{userId}")
-    public User getUserById(@PathVariable("userId") Integer userId) throws Exception {
+    public User getUserById(@PathVariable("userId") Integer userId) throws UserException {
         User user = userService.findUserById(userId);
         return user;
     }
 
     @PutMapping("api/users")
-    public User updateUser(@RequestHeader("Authorization") String jwt, @RequestBody User user) throws Exception {
+    public User updateUser(@RequestHeader("Authorization") String jwt, @RequestBody User user) throws UserException {
         User reqUser = userService.findUserByJwt(jwt);
         return userService.updateUser(reqUser.getId(), user);
     }
@@ -49,7 +50,7 @@ public class UserController {
     }
 
     @PutMapping("api/users/follow/{followerId}")
-    public User followUserHandler(@RequestHeader("Authorization") String jwt, @PathVariable("followerId") Integer followerId) throws Exception {
+    public User followUserHandler(@RequestHeader("Authorization") String jwt, @PathVariable("followerId") Integer followerId) throws UserException {
         User reqUser = userService.findUserByJwt(jwt);
         return userService.followUser(reqUser.getId(), followerId);
     }
