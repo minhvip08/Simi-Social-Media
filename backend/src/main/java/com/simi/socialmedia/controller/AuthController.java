@@ -61,8 +61,10 @@ public class AuthController{
     public AuthResponse loginUser(@RequestBody LoginRequest loginRequest){
         Authentication authentication = authenticate(loginRequest.getEmail(), loginRequest.getPassword());
 
+
+
         String token = JwtProvider.generateToken(authentication);
-        AuthResponse authResponse = new AuthResponse(token, "User created successfully");
+        AuthResponse authResponse = new AuthResponse(token, "Login successful");
         return authResponse;
 
     }
