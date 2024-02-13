@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
 import { loginUserAction } from "../../Redux/Auth/auth.action";
+import { useNavigate } from "react-router-dom";
 
 
 const initialValues = {
@@ -20,7 +21,7 @@ const validationSchema = {
 const Login = () => {
   const [formValues, setFormValues] = useState();
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const handleSubmit = (values) => {
     console.log("handleSubmit: ", values);
     dispatch(loginUserAction({ data: values }));
@@ -70,6 +71,14 @@ const Login = () => {
           </Button>
         </Form>
       </Formik>
+      <div>
+        <p className="text-center">
+          Don't have an account?{" "}
+          <Button color="primary" onClick={() => navigate('/register')}>
+            Register
+          </Button>
+        </p>
+      </div>
     </>
   );
 };

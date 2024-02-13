@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
 import { registerUserAction } from "../../Redux/Auth/auth.action";
+import { useNavigate } from "react-router-dom";
 
 const initialValues = {
   email: "",
@@ -24,6 +25,7 @@ const validationSchema = {
 const Register = () => {
   const[genders, setGenders] = useState();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = (values) => {
     values.gender = genders
@@ -138,6 +140,14 @@ const Register = () => {
           </Button>
         </Form>
       </Formik>
+      <div>
+        <p className="text-center">
+          If you have already account?{" "}
+          <Button color="primary" onClick={() => navigate('/login')}>
+            Register
+          </Button>
+        </p>
+      </div>
     </>
   );
 };
