@@ -142,9 +142,9 @@ const Register = () => {
       </Formik>
       <div>
         <p className="text-center">
-          If you have already account?{" "}
+          If you already have an account?{" "}
           <Button color="primary" onClick={() => navigate('/login')}>
-            Register
+            Login
           </Button>
         </p>
       </div>

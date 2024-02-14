@@ -64,7 +64,7 @@ public class UserController {
 
     public User getUserFromToken(@RequestHeader("Authorization") String token) throws Exception {
 
-//        System.out.println("Token: " + token);
+        System.out.println("Token: " + token);
         User user = userService.findUserByJwt(token);
 //        System.out.println(user);
         user.setPassword(null);

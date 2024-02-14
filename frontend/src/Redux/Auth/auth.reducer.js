@@ -2,15 +2,26 @@ const initialState = {
   jwt: null,
   loading: false,
   error: null,
+  user: null
 };
 export const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case "LOGIN_REQUEST":
     case "REGISTER_REQUEST":
+    case "GET_PROFILE_REQUEST":
       return {
         ...state,
         loading: true,
         error: null,
+        
+
+      };
+    case "GET_PROFILE_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        user: action.payload
       };
     case "LOGIN_SUCCESS":
     case "REGISTER_SUCCESS":
@@ -18,15 +29,21 @@ export const authReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         jwt: action.payload,
-        error: null,
+        error: null
+
       };
     case "LOGIN_FAILURE":
     case "REGISTER_FAILURE":
+      case "GET_PROFILE_FAILURE":
       return {
         ...state,
         loading: false,
         error: action.payload,
+        user: null
       };
+    
+
+      
       
     default:
       return state;

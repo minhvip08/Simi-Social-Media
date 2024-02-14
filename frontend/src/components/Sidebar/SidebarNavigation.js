@@ -27,12 +27,12 @@ export const navigationMenu= [
     {
         title: 'Notification',
         icon: <NotificationsIcon/>,
-        path: "/profile/1"
+        path: "/notification"
     },
     {
         title: 'Message',
         icon: <MessageIcon/>,
-        path: "/logout"
+        path: "/messages"
     },
     {
         title: 'Lists',

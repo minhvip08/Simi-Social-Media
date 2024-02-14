@@ -1,18 +1,26 @@
 import { Avatar, Card, IconButton } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import StoryCircle from "./StoryCircle";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import ArticleIcon from "@mui/icons-material/Article";
 import PostCard from "../Post/PostCard";
+import CreatePostModal from "../CreatePost/CreatePostModal";
 
 const story = [11, 1, 1, 1, 1];
 const post = [1,1,1,1,1,1];
 const MiddlePath = () => {
+  const [openCreatePostModal, setOpenCreatePostModal] = useState(false);
+
+  const handleCloseCreatePostModel = () =>setOpenCreatePostModal(false);
+
   const handleOpenCreatePostModel = () => {
+    setOpenCreatePostModal(true);
     console.log("open model");
   };
+
+
   return (
     <div className="px-20">
       <section className="py-5 flex items-center p-5 rounded-b-md">
@@ -34,6 +42,7 @@ const MiddlePath = () => {
           <div className="flex justify-between">
             <Avatar />
             <input
+            onClick={handleOpenCreatePostModel}
               className="outline-none w-[90%] bg-slate-100 rounded-full px-5 bg-transparent border-[#3b4054] border"
               type="text"
             />
@@ -63,6 +72,9 @@ const MiddlePath = () => {
           {
             post.map((item) => <PostCard/>)
           }
+        </div>
+        <div>
+          <CreatePostModal handleClose={handleCloseCreatePostModel} open={openCreatePostModal}/>
         </div>
       </section>
     </div>

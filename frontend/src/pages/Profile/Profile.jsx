@@ -6,6 +6,8 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import PostCard from "../../components/Post/PostCard";
 import UserReelCard from "../../components/Reels/UserReelCard";
+import { useSelector } from "react-redux";
+import ProfileModal from "./ProfileModal";
 
 const tabs = [
   { value: "posts", label: "Posts" },
@@ -23,10 +25,20 @@ const reposts = [1, 1, 1, 1, 1];
 const Profile = () => {
   const { id } = useParams();
   const [value, setValue] = React.useState("posts");
+  const {auth} = useSelector(store => store);
+
+  const [open, setOpen] = React.useState(true);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const handleEditProfile = () =>{
+    setOpen(true);
+  }
+
   return (
     <Card className="my-10 w-[70%]">
       <div className="rounded-md">
@@ -44,7 +56,7 @@ const Profile = () => {
             src="https://cdn.pixabay.com/photo/2023/12/13/17/54/bun-8447394_1280.jpg"
           />
           {true ? (
-            <Button sx={{ borderRadius: "20px" }} variant="outlined">
+            <Button sx={{ borderRadius: "20px" }} variant="outlined" onClick={handleEditProfile}>
               Edit Profile
             </Button>
           ) : (
@@ -54,8 +66,15 @@ const Profile = () => {
 
         <div className="p-5">
           <div>
-            <h1 className="py-1 font-bold text-xl">Bread Talk</h1>
-            <p className="">@breadtalk</p>
+          <p className="font-bold">
+                {auth.user?.firstName + " " + auth.user?.lastName}{" "}
+              </p>
+              <p className="opacity-70">
+                @
+                {auth.user?.firstName.toLowerCase() +
+                  "-" +
+                  auth.user?.lastName.toLowerCase()}
+              </p>
           </div>
           <div className="flex gap-2 items-center py-3">
             <span>41 posts</span>
@@ -126,6 +145,11 @@ const Profile = () => {
           </section>
         </div>
       </div>
+      <section>
+        <ProfileModal open={open} handleClose={handleClose}>
+
+        </ProfileModal>
+      </section>
     </Card>
   );
 };
