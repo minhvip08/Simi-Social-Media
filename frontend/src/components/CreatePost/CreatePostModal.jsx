@@ -7,6 +7,8 @@ import ImageIcon from "@mui/icons-material/Image";
 import { useState } from "react";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import { uploadToCloudniry } from "../../utils/uploadToCloudniry";
+import { useDispatch } from "react-redux";
+import { createPostAction } from "../../Redux/Post/post.action";
 
 const style = {
   position: "absolute",
@@ -26,6 +28,7 @@ const CreatePostModal = ({ handleClose, open }) => {
     const [isLoading, setIsLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const dispatch = useDispatch();
   const handleSelectImage = async (e) => {
     setIsLoading(true);
     const imageUrl = await uploadToCloudniry(e.target.files[0], "image");
@@ -38,7 +41,7 @@ const CreatePostModal = ({ handleClose, open }) => {
   const handleSelectVideo = async (e) => {
     setIsLoading(true);
     const videoUrl = await uploadToCloudniry(e.target.files[0], "video");
-    setSelectedImage(videoUrl);
+    setSelectedVideo(videoUrl);
     setIsLoading(false);
     formik.setFieldValue("video", videoUrl);
 
@@ -46,14 +49,19 @@ const CreatePostModal = ({ handleClose, open }) => {
 
   const formik = useFormik({
     initialValues:{
-        caption:"",
+        content:"",
         image:"",
         video:""
     },
     onSubmit: (values) => {
       console.log("formik values", values);
+      dispatch(createPostAction(values));
+      setSelectedImage(null);
+      setSelectedVideo(null);
     },
   });
+
+
 
 
   return (
@@ -75,10 +83,10 @@ const CreatePostModal = ({ handleClose, open }) => {
             </div>
             <textarea
             className="outline-none w-full mt-5 p-5 bg-slate-100 rounded-md bg-transparent border-[#3b4054] border"
-              placeholder="Write caption..."
-              name="caption"
+              placeholder="Write content..."
+              name="content"
               id=""
-              value={formik.caption}
+              value={formik.content}
               onChange={formik.handleChange}
               rows="3"
             ></textarea>

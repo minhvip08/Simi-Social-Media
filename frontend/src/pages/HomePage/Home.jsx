@@ -21,7 +21,6 @@ const Home = () => {
   //   dispatch(getProfileAction(jwt));
   // }, []);
 
-  console.log("Home",auth);
 
   return (
     <div className="px-20">

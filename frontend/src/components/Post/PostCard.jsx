@@ -5,10 +5,11 @@ import {
   CardContent,
   CardHeader,
   CardMedia,
+  Divider,
   IconButton,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -17,8 +18,31 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
+import { useDispatch, useSelector } from "react-redux";
+import { createCommentAction, likePostAction } from "../../Redux/Post/post.action";
+import { isLikedByReqUser } from "../../utils/isLikedByReqUser";
 
-const PostCard = () => {
+const PostCard = ({ item }) => {
+  const [showComment, setShowComment] = useState(false);
+  const { auth } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  // console.log("Item ", item);
+  const handleShowComment = () => {
+    setShowComment(!showComment);
+  };
+  const handleCreateComment = (value) => {
+    const reqData = {
+      postId: item.id,
+      data: {
+        content: value,
+      },
+    };
+    dispatch(createCommentAction(reqData));
+  };
+
+  const handleLikePost = () => {
+    dispatch(likePostAction(item.id));
+  };
   return (
     <Card className="">
       <CardHeader
@@ -32,32 +56,33 @@ const PostCard = () => {
             <MoreVertIcon />
           </IconButton>
         }
-        title="Bread Talk"
-        subheader="@breadtalk"
+        title={item.user.firstName + " " + item.user.lastName}
+        subheader={
+          "@" +
+          item.user.firstName.toLowerCase() +
+          "_" +
+          item.user.lastName.toLowerCase()
+        }
       />
 
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
+          {item.content}
         </Typography>
       </CardContent>
 
-      <CardMedia
-        component="img"
-        height="194"
-        image="https://cdn.pixabay.com/photo/2023/12/13/17/54/bun-8447394_1280.jpg"
-        alt="Paella dish"
-      />
+      <CardMedia component="img" height="194" image={item.image} />
+      <CardMedia component="video" height="194" image={item.video} />
 
       <CardActions className="flex justify-between" disableSpacing>
         <div>
-          <IconButton>
-            {true ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          <IconButton onClick={handleLikePost}>
+            {isLikedByReqUser(auth.user.id, item) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
           </IconButton>
           <IconButton>{<ShareIcon />}</IconButton>
-          <IconButton>{<ChatBubbleIcon />}</IconButton>
+          <IconButton onClick={handleShowComment}>
+            {<ChatBubbleIcon />}
+          </IconButton>
         </div>
         <div>
           <IconButton>
@@ -65,6 +90,40 @@ const PostCard = () => {
           </IconButton>
         </div>
       </CardActions>
+      {showComment && (
+        <section>
+          <div className="flex items-center space-x-5 mx-3 my-5">
+            <Avatar sx={{}} />
+            <input
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleCreateComment(e.target.value);
+                  console.log("Enter");
+                }
+              }}
+              className="w-full outline-none bg-transparent border border-[#3b4054] rounded-full px-5 py-2"
+              placeholder="Add a comment..."
+              type="text"
+            />
+          </div>
+          <Divider />
+
+          {item.comments.map((item) => (
+            <div className="mx-3 space-y-2 my-5 text-xs">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-5">
+                  <Avatar
+                    sx={{ height: "2rem", width: "2rem", fontSize: "0.8rem" }}
+                  >
+                    {item.user.firstName[0]}
+                  </Avatar>
+                  <p>{item.content}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
     </Card>
   );
 };

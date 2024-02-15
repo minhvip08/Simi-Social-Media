@@ -35,6 +35,8 @@ public class PostServiceImplementation implements PostService{
         newPost.setTitle(post.getTitle());
         newPost.setImage(post.getImage());
         newPost.setContent(post.getContent());
+        newPost.setVideo(post.getVideo());
+
         user.setSavedPosts(user.getSavedPosts());
 
 

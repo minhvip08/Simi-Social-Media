@@ -27,7 +27,7 @@ public class Post {
     private String video;
     private LocalDateTime createdAt;
 
-    @OneToMany
+    @ManyToMany
     private List<User> liked = new ArrayList<>();
 
     @OneToMany
