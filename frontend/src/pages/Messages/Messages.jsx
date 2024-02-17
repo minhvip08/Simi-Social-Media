@@ -13,6 +13,8 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { uploadToCloudniry } from "../../utils/uploadToCloudniry";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
 
 const Messages = () => {
   const [loading, setLoading] = useState(false);
@@ -21,6 +23,7 @@ const Messages = () => {
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const chatContainerRef = React.useRef(null);
 
   const handleSelectImage = async (e) => {
     setLoading(true);
@@ -38,16 +41,59 @@ const Messages = () => {
   console.log("Chats ", message.chats);
   const handleCreateMessage = (value) => {
     const message = {
-      chatId: currentChat.id,
+      chatId: currentChat?.id,
       content: value,
       image: selectedImage,
     };
-    dispatch(createMessage(message));
+    dispatch(createMessage({ message, sendMessageToServer }));
   };
 
   useEffect(() => {
     setMessages([...messages, message.message]);}
   , [message.message]);
+
+  const [stompClient, setStompClient] = useState(null);
+  useEffect(() => {
+    const socket = new SockJS("http://localhost:8000/ws");
+    const stomp = Stomp.over(socket);
+    setStompClient(stomp);
+    stomp.connect({}, onConnect, onErr);
+  }, []);
+
+  const onConnect = () => {
+    console.log("Connected");
+    // stompClient.subscribe("/topic/messages", onMessageReceived);
+  };
+
+  const onErr = (err) => {
+    console.log("Error ", err);
+  }
+
+  useEffect(() => {
+    if (stompClient && auth.user && currentChat) {
+      const subscription = stompClient.subscribe(`/user/${currentChat.id}/private`, onMessageReceived);
+    }
+  });
+
+  const sendMessageToServer = (newMessage) => {
+    if (stompClient && newMessage){
+      stompClient.send(`/app/chat/${currentChat?.id.toString()}`, {}, JSON.stringify(newMessage));
+    }
+  }
+
+  const onMessageReceived = (payload) => {
+    const receivedMessage = JSON.parse(payload.body);
+    console.log("Message Received ", receivedMessage);
+
+    setMessages([...messages, receivedMessage]);
+  };
+
+  useEffect(() => {
+      if(chatContainerRef.current){
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      }
+
+  }, [messages]);
 
   return (
     <div>
@@ -104,7 +150,7 @@ const Messages = () => {
                   </IconButton>
                 </div>
               </div>
-              <div className=" overflow-y-scroll hideScrollbar h-[82vh] px-2 space-y-5 py-5">
+              <div ref={chatContainerRef} className=" overflow-y-scroll hideScrollbar h-[82vh] px-2 space-y-5 py-5">
                 {messages.map((item)=><ChatMessage item={item}/>)}
               </div>
               <div className="sticky bottom-0 border-1 ">
