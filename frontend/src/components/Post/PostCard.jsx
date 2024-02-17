@@ -19,7 +19,10 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import { useDispatch, useSelector } from "react-redux";
-import { createCommentAction, likePostAction } from "../../Redux/Post/post.action";
+import {
+  createCommentAction,
+  likePostAction,
+} from "../../Redux/Post/post.action";
 import { isLikedByReqUser } from "../../utils/isLikedByReqUser";
 
 const PostCard = ({ item }) => {
@@ -48,7 +51,7 @@ const PostCard = ({ item }) => {
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
+            {item.user.firstName[0]}
           </Avatar>
         }
         action={
@@ -77,7 +80,11 @@ const PostCard = ({ item }) => {
       <CardActions className="flex justify-between" disableSpacing>
         <div>
           <IconButton onClick={handleLikePost}>
-            {isLikedByReqUser(auth.user.id, item) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            {isLikedByReqUser(auth.user.id, item) ? (
+              <FavoriteIcon />
+            ) : (
+              <FavoriteBorderIcon />
+            )}
           </IconButton>
           <IconButton>{<ShareIcon />}</IconButton>
           <IconButton onClick={handleShowComment}>
@@ -95,10 +102,11 @@ const PostCard = ({ item }) => {
           <div className="flex items-center space-x-5 mx-3 my-5">
             <Avatar sx={{}} />
             <input
-              onKeyPress={(e) => {
+
+              onKeyUp={(e) => {
                 if (e.key === "Enter") {
                   handleCreateComment(e.target.value);
-                  console.log("Enter");
+                  e.target.value = "";
                 }
               }}
               className="w-full outline-none bg-transparent border border-[#3b4054] rounded-full px-5 py-2"

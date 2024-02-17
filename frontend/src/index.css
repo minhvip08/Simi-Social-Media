@@ -12,6 +12,13 @@ code {
     monospace;
 }
 
+.hideScrollbar::-webkit-scrollbar{
+  width: 0px;
+  display: none;
+
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

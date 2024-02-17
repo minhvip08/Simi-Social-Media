@@ -29,19 +29,19 @@ public class UserController {
 
 
 
-    @GetMapping("users/{userId}")
+    @GetMapping("/api/users/{userId}")
     public User getUserById(@PathVariable("userId") Integer userId) throws UserException {
         User user = userService.findUserById(userId);
         return user;
     }
 
-    @PutMapping("api/users")
+    @PutMapping("/api/users")
     public User updateUser(@RequestHeader("Authorization") String jwt, @RequestBody User user) throws UserException {
         User reqUser = userService.findUserByJwt(jwt);
         return userService.updateUser(reqUser.getId(), user);
     }
 
-    @DeleteMapping("users/{userId}")
+    @DeleteMapping("/api/users/{userId}")
     public String deleteUser(@PathVariable("userId") Integer userId) throws Exception {
         Optional<User> optionalUser = userRepository.findById(userId);
         User user = optionalUser.orElseThrow(() -> new Exception("User not found"));
@@ -49,18 +49,18 @@ public class UserController {
         return "User deleted successfully";
     }
 
-    @PutMapping("api/users/follow/{followerId}")
+    @PutMapping("/api/users/follow/{followerId}")
     public User followUserHandler(@RequestHeader("Authorization") String jwt, @PathVariable("followerId") Integer followerId) throws UserException {
         User reqUser = userService.findUserByJwt(jwt);
         return userService.followUser(reqUser.getId(), followerId);
     }
 
-    @GetMapping("users/search")
+    @GetMapping("/api/users/search")
     public List<User> searchUserHandler(@RequestParam("query") String query) {
         return userService.searchUser(query);
     }
 
-    @GetMapping("api/users/profile")
+    @GetMapping("/api/users/profile")
 
     public User getUserFromToken(@RequestHeader("Authorization") String token) throws Exception {
 

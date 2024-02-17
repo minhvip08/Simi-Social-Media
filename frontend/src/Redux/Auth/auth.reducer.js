@@ -2,8 +2,10 @@ const initialState = {
   jwt: null,
   loading: false,
   error: null,
-  user: null
+  user: null,
+  searchUsers: []
 };
+
 export const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case "LOGIN_REQUEST":
@@ -42,6 +44,27 @@ export const authReducer = (state = initialState, action) => {
         user: null
       };
     
+      // case "SEARCH_USER_REQUEST":
+      // return {
+      //   ...state,
+      //   loading: true,
+      //   error: null,
+      // };
+    case "SEARCH_USER_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        searchUsers: action.payload
+      };
+    case "SEARCH_USER_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        searchUsers: []
+      };
+
 
       
       

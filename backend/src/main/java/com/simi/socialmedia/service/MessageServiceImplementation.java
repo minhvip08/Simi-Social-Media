@@ -28,16 +28,17 @@ public class MessageServiceImplementation implements MessageService{
     public Message createMessage(User user, Integer chatId, Message req) throws Exception {
         Message message = new Message();
         Chat chat = chatService.findChatById(chatId);
-        System.out.println("Chat:"+chat);
 
         message.setChat(chat);
         message.setContent(req.getContent());
         message.setTimestamp(LocalDateTime.now());
         message.setUser(user);
+        message.setImage(req.getImage());
 
         Message newMessage = messageRepository.save(message);
-        chat.getMessages().add(newMessage);
-        chatRepository.save(chat);
+        chat.getMessages().add(message);
+        Chat newChat = chatRepository.save(chat);
+        System.out.println("Chat:"+newChat.getMessages().size());
         return newMessage;
     }
 
